@@ -28,7 +28,8 @@
 
 - Create a "rule" that the agent should never directly read secrets:
   - "Never read, print, or log secrets. To check if secrets are non-empty in `.env`, you may use `if [ -n "${DEEPSEEK_API_KEY}" ]; then :; else echo "DEEPSEEK_API_KEY is not set"; fi`
-- Create
+- Create a "hook" that blocks `cat .env`:
+  - Example `beforeShellExecution` hook that denies the command when it matches `cat .env` (return `{ "permission": "deny" }`)
 
 ### Agent Vault
 
