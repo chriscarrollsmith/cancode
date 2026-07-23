@@ -20,7 +20,15 @@
 
 - Store secrets in a vault the agent can't access
 - Inject them mechanically into processes when needed
-- Example: Install Infisical's [`agent-vault`](https://docs.agent-vault.dev/quickstart/cursor)
+- Examples:
+   - 1Password's [Cursor Hooks](https://1password.com/blog/bringing-secure-just-in-time-secrets-to-cursor-with-1password)
+   - Infisical's [`agent-vault`](https://docs.agent-vault.dev/quickstart/cursor)
+
+**Block the agent from running dangerous commands:**
+
+- Create a "rule" that the agent should never directly read secrets:
+  - "Never read, print, or log secrets. To check if secrets are non-empty in `.env`, you may use `if [ -n "${DEEPSEEK_API_KEY}" ]; then :; else echo "DEEPSEEK_API_KEY is not set"; fi`
+- Create
 
 ### Agent Vault
 
