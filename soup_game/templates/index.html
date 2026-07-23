@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Soup Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito:wght@500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="steam" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </div>
+
+    <main class="stage">
+      <header class="brand">
+        <p class="brand__mark">Soup Game</p>
+        <p class="brand__tag" id="statusMessage">{{ state.status_message }}</p>
+      </header>
+
+      {% if not joined %}
+      <section class="join" id="joinPanel">
+        <form class="join__form" method="post" action="/join">
+          <label for="name">Pick a name and pull up a chair</label>
+          <div class="join__row">
+            <input
+              id="name"
+              name="name"
+              type="text"
+              maxlength="24"
+              required
+              placeholder="Your name"
+              autocomplete="nickname"
+            />
+            <button type="submit">Join the table</button>
+          </div>
+        </form>
+      </section>
+      {% else %}
+      <section class="table" id="gameRoot"
+        data-joined="1"
+        data-player-id="{{ state.my_player_id or '' }}">
+        <div class="prompt-block" id="promptBlock">
+          <p class="phase" id="phaseLabel">{{ state.phase }}</p>
+          <h1 class="prompt" id="promptText">
+            {% if state.prompt_text %}
+              {{ state.prompt_text }}
+            {% else %}
+              Waiter, there's a _____ in my soup!
+            {% endif %}
+          </h1>
+          <p class="timer" id="timer" hidden></p>
+        </div>
+
+        <div class="play" id="playArea">
+          <form class="answer-form" id="answerForm" hidden>
+            <label for="answerInput">Your punchline</label>
+            <textarea
+              id="answerInput"
+              maxlength="200"
+              rows="3"
+              placeholder="What does the waiter say?"
+            ></textarea>
+            <button type="submit">Serve it</button>
+          </form>
+
+          <div class="answers" id="answers" hidden></div>
+          <p class="waiting" id="waitingNote" hidden></p>
+          <div class="winner" id="winnerBanner" hidden></div>
+        </div>
+
+        <aside class="roster">
+          <h2>At the table</h2>
+          <ul id="playerList">
+            {% for player in state.players %}
+            <li class="{% if player.is_active %}is-active{% endif %} {% if not player.connected %}is-away{% endif %}">
+              <span>{{ player.name }}</span>
+              <span class="score">{{ player.score }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+          <p class="meta" id="metaLine">
+            {{ state.connected_count }}/{{ state.min_players }} needed to start
+          </p>
+        </aside>
+      </section>
+      {% endif %}
+    </main>
+
+    <script src="/static/game.js" type="module"></script>
+  </body>
+</html>
