@@ -1,41 +1,41 @@
-## Introduction to Cursor
+# Soup Game
 
-- Fork of VSCode
-- Has an "IDE" view and an "Agents" view
-- Offers multi-line autocomplete in the IDE interface
-- Provides access to all of the major AI coding models in one interface
-- Lets you run parallel agents in the cloud
-- Lets you set up automations that run on a trigger
-- Supports `AGENTS.md`, "skills", and "hooks"
+A tiny multiplayer party game in one shared room.
 
-## Security
+**Prompt:** *Waiter, there's a {random noun} in my soup!*  
+Two players get 30 seconds to write a punchline. Everyone else votes. Winner gets crowned, then a new random pair is promoted for the next round.
 
-**Insecure patterns:**
+## Stack
 
-- Storing secrets in files
-- Storing secrets in environment variables
-- Storing secrets in a vault, but letting your agent read the vault
+- FastAPI + Jinja2 + WebSockets
+- Redis for shared room state
+- UV for packaging
+- Ruff + Ty for linting and type checking
+- Wonder Words for random nouns
 
-**More secure pattern:**
+## Local development
 
-- Store secrets in a vault the agent can't access
-- Inject them mechanically into processes when needed
-- Examples:
-   - 1Password's [Cursor Hooks](https://1password.com/blog/bringing-secure-just-in-time-secrets-to-cursor-with-1password)
-   - Infisical's [`agent-vault`](https://docs.agent-vault.dev/quickstart/cursor)
+```bash
+uv sync
+docker run --rm -p 6379:6379 redis:7   # or any local Redis
+export REDIS_URL=redis://127.0.0.1:6379/0
+uv run uvicorn soup_game.main:app --reload --port 8000
+```
 
-**Block the agent from running dangerous commands:**
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000). You need at least 3 connected players to start a round.
 
-- Create a "rule" that the agent should never directly read secrets:
-  - "Never read, print, or log secrets. To check if secrets are non-empty in `.env`, you may use `if [ -n "${DEEPSEEK_API_KEY}" ]; then :; else echo "DEEPSEEK_API_KEY is not set"; fi`
-- Create
+## Checks
 
-### Agent Vault
+```bash
+uv run ruff check .
+uv run ty check
+```
 
+## Deploy
 
+The Hetzner host uses Redis, systemd, and nginx. From a machine with SSH access:
 
-## Guardrails
-
-Agentic coding works best with deterministic guardrails!
-
-- 
+```bash
+rsync -az --delete --exclude .venv --exclude .git ./ root@SERVER:/opt/soup-game/
+ssh root@SERVER 'bash /opt/soup-game/deploy/setup-server.sh'
+```
