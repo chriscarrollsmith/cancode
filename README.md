@@ -1,6 +1,6 @@
 # Soup Game
 
-**Live:** https://87.99.128.58/
+**Live:** https://46.225.10.208/
 
 A tiny multiplayer party game in one shared room.
 
@@ -48,5 +48,5 @@ Soup Game uses a Let's Encrypt short-lived certificate for the server IP
 (~6 day lifetime, auto-renewed by Certbot):
 
 ```bash
-SERVER_IP=87.99.128.58 LETSENCRYPT_EMAIL=you@example.com bash deploy/issue-ip-cert.sh
+SERVER_IP=46.225.10.208 LETSENCRYPT_EMAIL=you@example.com bash deploy/issue-ip-cert.sh
 ```

@@ -3,7 +3,7 @@ set -euo pipefail
 
 APP_DIR=/opt/soup-game
 REPO_URL="${REPO_URL:-}"
-BRANCH="${BRANCH:-cursor/soup-game-5d17}"
+BRANCH="${BRANCH:-cursor/soup-game-7344}"
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
@@ -34,7 +34,9 @@ uv sync --frozen || uv sync
 chown -R www-data:www-data "$APP_DIR"
 
 install -m 644 "$APP_DIR/deploy/soup-game.service" /etc/systemd/system/soup-game.service
-install -m 644 "$APP_DIR/deploy/nginx.conf" /etc/nginx/sites-available/soup-game
+# Fresh hosts start on HTTP so the app is reachable before a certificate exists.
+install -m 644 "$APP_DIR/deploy/nginx-http-bootstrap.conf" \
+  /etc/nginx/sites-available/soup-game
 ln -sfn /etc/nginx/sites-available/soup-game /etc/nginx/sites-enabled/soup-game
 rm -f /etc/nginx/sites-enabled/default
 
@@ -44,4 +46,4 @@ systemctl restart soup-game
 nginx -t
 systemctl reload nginx
 
-echo "Soup Game is live."
+echo "Soup Game is live on HTTP. Run deploy/issue-ip-cert.sh for HTTPS."

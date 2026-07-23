@@ -34,7 +34,8 @@ fi
 
 certbot "${ARGS[@]}"
 
-install -m 644 /opt/soup-game/deploy/nginx.conf /etc/nginx/sites-available/soup-game
+sed "s/__SERVER_IP__/${SERVER_IP}/g" /opt/soup-game/deploy/nginx.conf \
+  >/etc/nginx/sites-available/soup-game
 nginx -t
 systemctl reload nginx
 
