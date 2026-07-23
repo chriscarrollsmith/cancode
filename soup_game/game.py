@@ -47,10 +47,10 @@ class GameService:
             existing = room.players.get(pid)
             if existing is not None:
                 existing.name = display
-                existing.connected = True
                 player = existing
             else:
-                player = Player(id=pid, name=display, connected=True, score=0)
+                # Presence is owned by the WebSocket connection lifecycle.
+                player = Player(id=pid, name=display, connected=False, score=0)
                 room.players[pid] = player
             if room.phase == Phase.LOBBY:
                 room.status_message = self._lobby_message(room)
